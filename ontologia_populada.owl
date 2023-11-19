@@ -136,6 +136,10 @@
   <rdfs:domain rdf:resource="#MeasurementData"/>
 </owl:DatatypeProperty>
 
+<owl:Class rdf:about="#Cattle">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
 <owl:Class rdf:about="#DairyCattle">
   <rdfs:subClassOf rdf:resource="#Cattle"/>
 </owl:Class>
@@ -144,19 +148,15 @@
   <rdfs:subClassOf rdf:resource="#Cattle"/>
 </owl:Class>
 
-<owl:Class rdf:about="#MeasurementData">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-</owl:Class>
-
 <owl:Class rdf:about="#RuralProperty">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 </owl:Class>
 
-<owl:Class rdf:about="#BaseLineEmissions">
+<owl:Class rdf:about="#MeasurementData">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Cattle">
+<owl:Class rdf:about="#BaseLineEmissions">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 </owl:Class>
 
