@@ -125,23 +125,23 @@ def generateOntology(run_reasoner=False, save=True, run_sensor=False):
         # Adicione a regra SWRL
         rule = Imp()
         rule.set_as_rule(
-            'Cattle(?c1) ^ Cattle(?c2) ^ differentFrom(?c1, ?c2) ^ HasCattleId(?c1, ?id1) ^ HasCattleId(?c2, ?id2) ^ equal(?id1, ?id2) -> differentFrom(?c1, ?c2)'
-        )
-        
+                'Cattle(?c1) ^ Cattle(?c2) ^ HasCattleId(?c1, ?id1) ^ HasCattleId(?c2, ?id2) ^ differentFrom(?c1, ?c2) -> differentFrom(?id1, ?id2)'
+            )
+        print("SWRL Rule:", rule)
         # Salvar a ontologia
         if save:
-            onto.save(file="ontologia.owl", format="rdfxml")
+            onto.save(file="ontology/ontologia.owl", format="rdfxml")
 
     
-def popula_ontologia():
+def populaOntologia():
     fileName = r"ontologia.owl"
     
     if os.path.isfile(fileName):
-        onto = get_ontology('ontologia.owl')
+        onto = get_ontology('ontology/ontologia.owl')
         onto.load()
     else:
         generateOntology(True, True, True)
-        onto = get_ontology('ontologia.owl')
+        onto = get_ontology('ontology/ontologia.owl')
         onto.load()
 
     cow_instances = {}  # Dictionary to store unique cow instances based on 'Brinco'
@@ -179,11 +179,16 @@ def popula_ontologia():
                 # Conectar a instância de DairyCattle à propriedade rural usando a propriedade BelongsToProperty
 
     # Save the populated ontology
-    onto.save(file="ontologia_populada.owl", format="rdfxml")
+    onto.save(file="ontology/ontologia_populada.owl", format="rdfxml")
     sync_reasoner_pellet(infer_property_values=True, infer_data_property_values=True)  # Pellet
-
+    
     # Save the updated ontology
-    onto.save(file="ontologia_populada_sync_reasoner_pellet.owl", format="rdfxml")
+    onto.save(file="ontology/ontologia_populada_sync_reasoner_pellet.owl", format="rdfxml")
+    
+def getOntologia():
+    populaOntologia()
+    return get_ontology('ontology/ontologia.owl')
 
+    
 # Call the function to populate the ontology
-popula_ontologia()
+# popula_ontologia()

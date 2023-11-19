@@ -143,10 +143,6 @@
   <rdfs:domain rdf:resource="#MeasurementData"/>
 </owl:DatatypeProperty>
 
-<owl:Class rdf:about="#Cattle">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-</owl:Class>
-
 <owl:Class rdf:about="#DairyCattle">
   <rdfs:subClassOf rdf:resource="#Cattle"/>
 </owl:Class>
@@ -155,15 +151,19 @@
   <rdfs:subClassOf rdf:resource="#Cattle"/>
 </owl:Class>
 
-<owl:Class rdf:about="#RuralProperty">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-</owl:Class>
-
 <owl:Class rdf:about="#MeasurementData">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 </owl:Class>
 
+<owl:Class rdf:about="#RuralProperty">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
 <owl:Class rdf:about="#BaseLineEmissions">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cattle">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 </owl:Class>
 
@@ -11157,8 +11157,8 @@
     <rdf:Description>
       <rdf:first>
         <swrl:DifferentIndividualsAtom>
-          <swrl:argument1 rdf:resource="urn:swrl#c1"/>
-          <swrl:argument2 rdf:resource="urn:swrl#c2"/>
+          <swrl:argument1 rdf:resource="urn:swrl#id1"/>
+          <swrl:argument2 rdf:resource="urn:swrl#id2"/>
         </swrl:DifferentIndividualsAtom>
       </rdf:first>
       <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
@@ -11174,50 +11174,30 @@
                 <rdf:Description>
                   <rdf:rest>
                     <rdf:Description>
-                      <rdf:rest>
-                        <rdf:Description>
-                          <rdf:first>
-                            <swrl:BuiltinAtom>
-                              <swrl:arguments>
-                                <rdf:Description>
-                                  <rdf:rest>
-                                    <rdf:Description>
-                                      <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                      <rdf:first rdf:resource="urn:swrl#id2"/>
-                                    </rdf:Description>
-                                  </rdf:rest>
-                                  <rdf:first rdf:resource="urn:swrl#id1"/>
-                                </rdf:Description>
-                              </swrl:arguments>
-                              <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#equal"/>
-                            </swrl:BuiltinAtom>
-                          </rdf:first>
-                          <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                        </rdf:Description>
-                      </rdf:rest>
                       <rdf:first>
-                        <swrl:IndividualPropertyAtom>
-                          <swrl:propertyPredicate rdf:resource="#HasCattleId"/>
-                          <swrl:argument1 rdf:resource="urn:swrl#c2"/>
-                          <swrl:argument2 rdf:resource="urn:swrl#id2"/>
-                        </swrl:IndividualPropertyAtom>
+                        <swrl:DifferentIndividualsAtom>
+                          <swrl:argument1 rdf:resource="urn:swrl#c1"/>
+                          <swrl:argument2 rdf:resource="urn:swrl#c2"/>
+                        </swrl:DifferentIndividualsAtom>
                       </rdf:first>
+                      <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                     </rdf:Description>
                   </rdf:rest>
                   <rdf:first>
                     <swrl:IndividualPropertyAtom>
                       <swrl:propertyPredicate rdf:resource="#HasCattleId"/>
-                      <swrl:argument1 rdf:resource="urn:swrl#c1"/>
-                      <swrl:argument2 rdf:resource="urn:swrl#id1"/>
+                      <swrl:argument1 rdf:resource="urn:swrl#c2"/>
+                      <swrl:argument2 rdf:resource="urn:swrl#id2"/>
                     </swrl:IndividualPropertyAtom>
                   </rdf:first>
                 </rdf:Description>
               </rdf:rest>
               <rdf:first>
-                <swrl:DifferentIndividualsAtom>
+                <swrl:IndividualPropertyAtom>
+                  <swrl:propertyPredicate rdf:resource="#HasCattleId"/>
                   <swrl:argument1 rdf:resource="urn:swrl#c1"/>
-                  <swrl:argument2 rdf:resource="urn:swrl#c2"/>
-                </swrl:DifferentIndividualsAtom>
+                  <swrl:argument2 rdf:resource="urn:swrl#id1"/>
+                </swrl:IndividualPropertyAtom>
               </rdf:first>
             </rdf:Description>
           </rdf:rest>
