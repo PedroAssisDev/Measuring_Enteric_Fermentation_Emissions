@@ -27,7 +27,7 @@ def generateOntology(run_reasoner=False, save=True, run_sensor=False):
             pass
 
     # Definir ObjectProperties
-        class HasMeasurementData(ObjectProperty, FunctionalProperty):
+        class HasMeasurementData(ObjectProperty):
             domain = [DairyCattle, OtherCattle]
             range = [MeasurementData]
     
@@ -59,6 +59,11 @@ def generateOntology(run_reasoner=False, save=True, run_sensor=False):
         class HasBaseLineEmissions(ObjectProperty, FunctionalProperty):
             domain = [RuralProperty]
             range = [BaseLineEmissions]
+        
+        ############################# 
+        class HasCattleId(ObjectProperty, FunctionalProperty):
+            domain = [Cattle, MeasurementData]
+            range = [str]
 
     # Definir DataProperties
         class cattleName(DataProperty):
@@ -116,11 +121,18 @@ def generateOntology(run_reasoner=False, save=True, run_sensor=False):
         class entericEmissionFactor(DataProperty):
             domain = [MeasurementData]
             range = [float]
+        # Adicione a regra SWRL
+        rule = Imp()
+        rule.set_as_rule(
+            'DairyCattle(?c) ^ MeasurementData(?m) ^ hasMeasurementData(?c, ?m) ^ hasCattleId(?c, ?id) ^ hasCattleId(?m, ?id) -> differentFrom(?c, ?m)'
+        )
+        rule_individual = Rule()
+        rule_individual.is_a.append(rule)
         # Salvar a ontologia
         if save:
             onto.save(file="ontologia.owl", format="rdfxml")
 
-
+    
 def popula_ontologia():
     fileName = r"ontologia.owl"
     
@@ -132,6 +144,8 @@ def popula_ontologia():
         onto = get_ontology('ontologia.owl')
         onto.load()
 
+    cow_instances = {}  # Dictionary to store unique cow instances based on 'Brinco'
+
     with onto:
         with open('/home/pedro_estudos/Documentos/GitHub/Measuring_Enteric_Fermentation_Emissions/data'
                   '/Fazenda_Abc_dados_vacas.csv', newline='') as csvfile:
@@ -141,11 +155,17 @@ def popula_ontologia():
             propriedade_rural.PropertyName.append(nome_propriedade_rural)
             propriedade_rural.Gwp.append(28)
             for row in reader:
-                # Create instance of the class Cattle
-                # This will create a new instance or get an existing one with the same name
-                vaca = onto.DairyCattle()
+                cow_id = row['Brinco']
+                
+                # Criar uma nova instância de DairyCattle apenas se ainda não existir para essa vaca
+                if cow_id not in cow_instances:
+                    cow_instance = onto.DairyCattle(cattleId=[cow_id], cattleName=[str("Cattle" + row['Brinco'])])
+                    cow_instances[cow_id] = cow_instance
+                    cow_instance.BelongsToProperty = propriedade_rural
+                else:
+                    cow_instance = cow_instances[cow_id]
 
-                # Create instance of MeasurementData for each data row
+                # Criar uma instância de MeasurementData para cada linha de dados
                 measurement_data = onto.MeasurementData()
                 measurement_data.measurementDate.append(datetime.strptime(row['Date'], "%Y-%m-%d"))
                 measurement_data.cattleId.append(str(row['Brinco']))
@@ -153,19 +173,17 @@ def popula_ontologia():
                 measurement_data.producao.append(float(row['Leite']))
                 measurement_data.fatorEmissao.append(103)
 
-                # Connect the MeasurementData instance to the DairyCattle instance using the HasMeasurementData property
-                vaca.HasMeasurementData = (measurement_data)
+                # Conectar a instância de MeasurementData à instância de DairyCattle usando a propriedade HasMeasurementData
+                cow_instances[str(row['Brinco'])].HasMeasurementData.append(measurement_data)
 
-                # Connect the DairyCattle instance to the RuralProperty using the BelongsToProperty property
-                vaca.BelongsToProperty = (propriedade_rural)
+                # Conectar a instância de DairyCattle à propriedade rural usando a propriedade BelongsToProperty
 
-    # Execute the reasoner
+    # Save the populated ontology
     onto.save(file="ontologia_populada.owl", format="rdfxml")
-
-    #sync_reasoner_pellet(infer_property_values=True, infer_data_property_values=True)  # Pellet
+    sync_reasoner_pellet(infer_property_values=True, infer_data_property_values=True)  # Pellet
 
     # Save the updated ontology
-    #onto.save(file="ontologia_populada_sync_reasoner_pellet.owl", format="rdfxml")
+    onto.save(file="ontologia_populada_sync_reasoner_pellet.owl", format="rdfxml")
 
 # Call the function to populate the ontology
 popula_ontologia()

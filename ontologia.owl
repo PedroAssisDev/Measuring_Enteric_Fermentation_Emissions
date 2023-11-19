@@ -9,7 +9,6 @@
 <owl:Ontology rdf:about="http://www.semanticweb.org/owl/owlapi/mensuring_ontology"/>
 
 <owl:ObjectProperty rdf:about="#HasMeasurementData">
-  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
   <rdfs:domain rdf:resource="#DairyCattle"/>
   <rdfs:domain rdf:resource="#OtherCattle"/>
   <rdfs:range rdf:resource="#MeasurementData"/>
