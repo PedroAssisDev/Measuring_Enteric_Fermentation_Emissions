@@ -1,6 +1,7 @@
 import csv
 
 from owlready2 import *
+
 from datetime import datetime
 
 def generateOntology(run_reasoner=False, save=True, run_sensor=False):
@@ -25,47 +26,8 @@ def generateOntology(run_reasoner=False, save=True, run_sensor=False):
         
         class BaseLineEmissions(Thing):
             pass
-
-    # Definir ObjectProperties
-        class HasMeasurementData(ObjectProperty):
-            domain = [DairyCattle, OtherCattle]
-            range = [MeasurementData]
-    
-        class BelongsToProperty(ObjectProperty, FunctionalProperty,  SymmetricProperty):
-            domain = [DairyCattle, OtherCattle]
-            range = [RuralProperty]
         
-        class HasCattleGroup(ObjectProperty, FunctionalProperty):
-            inverse_property = BelongsToProperty
-            domain = [RuralProperty]
-            range = [DairyCattle, OtherCattle]
-        
-        class HasTotalEmissions(ObjectProperty, FunctionalProperty):
-            domain = [BaseLineEmissions]
-            range = [RuralProperty]
-        
-        class HasGroupEmissions(ObjectProperty, FunctionalProperty):
-            domain = [RuralProperty]
-            range = [DairyCattle, OtherCattle]
-        
-        class HasAnimalQuantity(ObjectProperty, FunctionalProperty):
-            domain = [RuralProperty]
-            range = [DairyCattle, OtherCattle]
-        
-        class HasMilkProduction(ObjectProperty, FunctionalProperty):
-            domain = [RuralProperty]
-            range = [DairyCattle]
-        
-        class HasBaseLineEmissions(ObjectProperty, FunctionalProperty):
-            domain = [RuralProperty]
-            range = [BaseLineEmissions]
-        
-        ############################# 
-        class HasCattleId(ObjectProperty, FunctionalProperty):
-            domain = [Cattle, MeasurementData]
-            range = [str]
-
-    # Definir DataProperties
+        # Definir DataProperties
         class cattleName(DataProperty):
             domain = [Cattle]
             range = [str]
@@ -121,13 +83,51 @@ def generateOntology(run_reasoner=False, save=True, run_sensor=False):
         class entericEmissionFactor(DataProperty):
             domain = [MeasurementData]
             range = [float]
+    
+    # Definir ObjectProperties
+        class HasMeasurementData(ObjectProperty):
+            domain = [DairyCattle, OtherCattle]
+            range = [MeasurementData]
+    
+        class BelongsToProperty(ObjectProperty, FunctionalProperty,  SymmetricProperty):
+            domain = [DairyCattle, OtherCattle]
+            range = [RuralProperty]
+        
+        class HasCattleGroup(ObjectProperty, FunctionalProperty):
+            inverse_property = BelongsToProperty
+            domain = [RuralProperty]
+            range = [DairyCattle, OtherCattle]
+        
+        class HasTotalEmissions(ObjectProperty, FunctionalProperty):
+            domain = [BaseLineEmissions]
+            range = [RuralProperty]
+        
+        class HasGroupEmissions(ObjectProperty, FunctionalProperty):
+            domain = [RuralProperty]
+            range = [DairyCattle, OtherCattle]
+        
+        class HasAnimalQuantity(ObjectProperty, FunctionalProperty):
+            domain = [RuralProperty]
+            range = [DairyCattle, OtherCattle]
+        
+        class HasMilkProduction(ObjectProperty, FunctionalProperty):
+            domain = [RuralProperty]
+            range = [DairyCattle]
+        
+        class HasBaseLineEmissions(ObjectProperty, FunctionalProperty):
+            domain = [RuralProperty]
+            range = [BaseLineEmissions]
+        
+        ############################# 
+        class HasCattleId(ObjectProperty, FunctionalProperty):
+            domain = [Cattle, MeasurementData]
+            range = [str]        
         # Adicione a regra SWRL
         rule = Imp()
         rule.set_as_rule(
-            'DairyCattle(?c) ^ MeasurementData(?m) ^ hasMeasurementData(?c, ?m) ^ hasCattleId(?c, ?id) ^ hasCattleId(?m, ?id) -> differentFrom(?c, ?m)'
+            'Cattle(?c1) ^ Cattle(?c2) ^ differentFrom(?c1, ?c2) ^ HasCattleId(?c1, ?id1) ^ HasCattleId(?c2, ?id2) ^ equal(?id1, ?id2) -> differentFrom(?c1, ?c2)'
         )
-        rule_individual = Rule()
-        rule_individual.is_a.append(rule)
+        
         # Salvar a ontologia
         if save:
             onto.save(file="ontologia.owl", format="rdfxml")
