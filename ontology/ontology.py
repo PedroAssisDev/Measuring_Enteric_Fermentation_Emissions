@@ -1,11 +1,24 @@
 import csv
-
+import pandas as pd
 from owlready2 import *
 
 from datetime import datetime
 
-def generateOntology(run_reasoner=False, save=True, run_sensor=False):
-    onto_path.append("/home/pedro_estudos/Documentos/GitHub/Measuring_Enteric_Fermentation_Emissions/ontology")
+# Obtendo o caminho do diretório pai do arquivo .py
+current_directory = os.path.dirname(os.path.abspath(__file__))
+# Construindo caminhos para os diretórios e arquivos
+base_directory = os.path.dirname(current_directory)
+ontology_directory = os.path.join(base_directory, "ontology")
+data_directory = os.path.join(base_directory, "data")
+# Lista de caminhos dos arquivos/diretórios
+file_ontology_1 = os.path.join(ontology_directory, "ontologia.owl")
+file_ontology_2 = os.path.join(ontology_directory, "ontologia_final_populada.owl")
+file_ontology_3 = os.path.join(ontology_directory, "ontologia_populada_sync_reasoner_pellet.owl")
+file_data = os.path.join(data_directory, "pesoXleite_parsed.csv")
+
+
+def generateOntology(save=True):
+    onto_path.append(file_ontology_1)
     onto = get_ontology("http://www.semanticweb.org/owl/owlapi/mensuring_ontology#")
     with onto:
             # Definir classes
@@ -18,6 +31,8 @@ def generateOntology(run_reasoner=False, save=True, run_sensor=False):
         class OtherCattle(Cattle):
             pass
         
+        #AllDisjoint([DairyCattle, OtherCattle])
+        
         class RuralProperty(Thing):
             pass
         
@@ -26,6 +41,11 @@ def generateOntology(run_reasoner=False, save=True, run_sensor=False):
         
         class BaseLineEmissions(Thing):
             pass
+        class BaseLineEmissionsTier1(BaseLineEmissions):
+            pass
+        class BaseLineEmissionsTier2(BaseLineEmissions):
+            pass
+
         
         # Definir DataProperties
         class cattleName(DataProperty):
@@ -35,53 +55,64 @@ def generateOntology(run_reasoner=False, save=True, run_sensor=False):
             domain = [Cattle]
             range = [str]
         
-        class peso(DataProperty):
-            domain = [Cattle]
+        class weight(DataProperty):
+            domain = [Cattle, MeasurementData]
             range = [float]
                
-        class producao(DataProperty):
-            domain = [DairyCattle]
+        class milkProduction(DataProperty):
+            domain = [DairyCattle, MeasurementData]
             range = [float]   
         
-        class dataMedicao(DataProperty):
-            domain = [Cattle, MeasurementData]
-            range = [datetime]
-        
-        class fatorEmissao(DataProperty):
-            domain = [Cattle, MeasurementData]
-            range = [float]
-        
-        
-        class TotalEmissions(DataProperty):
-            domain = [RuralProperty]
-            range = [float]
-        
-        class AnimalQuantity(DataProperty):
-            domain = [RuralProperty]
-            range = [int]
-        
-        class MilkProduction(DataProperty):
-            domain = [RuralProperty]
-            range = [float]
-        
-        class Gwp(DataProperty):
-            domain = [RuralProperty]
-            range = [float]
-        
-        class PropertyName(DataProperty):
-            domain = [RuralProperty]
-            range = [str]
-        
         class measurementDate(DataProperty):
-            domain = [MeasurementData]
+            domain = [Cattle, MeasurementData]
             range = [datetime]
         
-        class daysOnFarm(DataProperty):
-            domain = [MeasurementData]
+        class emissionFactor(DataProperty):
+            domain = [Cattle, MeasurementData]
+            range = [float]
+        class energyDensity(DataProperty):
+            domain = [Cattle, MeasurementData]
+            range = [float]
+        class dryMatterIntake(DataProperty):
+            domain = [Cattle, MeasurementData]
+            range = [float]
+        class monthsOnFarm(DataProperty):
+            domain = [Cattle, MeasurementData]
+            range = [int]        
+        
+        class animalQuantity(DataProperty):
+            domain = [RuralProperty]
             range = [int]
         
-        class entericEmissionFactor(DataProperty):
-            domain = [MeasurementData]
+        class totalMilkProduction(DataProperty):
+            domain = [RuralProperty]
+            range = [float]
+        
+        class gwp(DataProperty):
+            domain = [Cattle, RuralProperty]
+            range = [float]
+        
+        class propertyName(DataProperty):
+            domain = [RuralProperty]
+            range = [str]      
+        
+        class totalEmissionsTier1(DataProperty):
+            domain = [RuralProperty, BaseLineEmissions]
+            range = [float]
+        class totalEmissionsTier2(DataProperty):
+            domain = [RuralProperty, BaseLineEmissions]
+            range = [float]
+            
+        class grossEnergyIntake(DataProperty):
+            domain = [BaseLineEmissionsTier2]
+            range = [float]
+            
+        class totalEntericEmissionFactorTier1(DataProperty):
+            domain = [BaseLineEmissionsTier1]
+            range = [float]
+            
+        class totalEntericEmissionFactorTier2(DataProperty):
+            domain = [BaseLineEmissionsTier2]
             range = [float]
     
     # Definir ObjectProperties
@@ -114,7 +145,7 @@ def generateOntology(run_reasoner=False, save=True, run_sensor=False):
             domain = [RuralProperty]
             range = [DairyCattle]
         
-        class HasBaseLineEmissions(ObjectProperty, FunctionalProperty):
+        class HasBaseLineEmissions(ObjectProperty, FunctionalProperty, SymmetricProperty):
             domain = [RuralProperty]
             range = [BaseLineEmissions]
         
@@ -124,71 +155,74 @@ def generateOntology(run_reasoner=False, save=True, run_sensor=False):
             range = [str]        
         # Adicione a regra SWRL
         rule = Imp()
-        rule.set_as_rule(
-                'Cattle(?c1) ^ Cattle(?c2) ^ HasCattleId(?c1, ?id1) ^ HasCattleId(?c2, ?id2) ^ differentFrom(?c1, ?c2) -> differentFrom(?id1, ?id2)'
-            )
+        rule.set_as_rule('Cattle(?c1) ^ Cattle(?c2) ^ HasCattleId(?c1, ?id1) ^ HasCattleId(?c2, ?id2) ^ differentFrom(?c1, ?c2) -> differentFrom(?id1, ?id2) ^ differentFrom(?c1, ?id2) ^ differentFrom(?c2, ?id1)')
         print("SWRL Rule:", rule)
         # Salvar a ontologia
         if save:
-            onto.save(file="ontology/ontologia.owl", format="rdfxml")
+            onto.save(file=file_ontology_1, format="rdfxml")
 
     
 def populaOntologia():
-    fileName = r"ontologia.owl"
+    fileName = r"ontologia_final.owl"
     
     if os.path.isfile(fileName):
-        onto = get_ontology('ontology/ontologia.owl')
+        onto = get_ontology(file_ontology_1)
         onto.load()
     else:
-        generateOntology(True, True, True)
-        onto = get_ontology('ontology/ontologia.owl')
+        generateOntology(True)
+        onto = get_ontology(file_ontology_1)
         onto.load()
 
     cow_instances = {}  # Dictionary to store unique cow instances based on 'Brinco'
 
     with onto:
-        with open('/home/pedro_estudos/Documentos/GitHub/Measuring_Enteric_Fermentation_Emissions/data'
-                  '/Fazenda_Abc_dados_vacas.csv', newline='') as csvfile:
-            reader = csv.DictReader(csvfile)
-            nome_propriedade_rural = "NomeDaSuaFazenda"
+        with open(file_data, newline='') as csvfile:
+            basilene = onto.BaseLineEmissions()
             propriedade_rural = onto.RuralProperty()
-            propriedade_rural.PropertyName.append(nome_propriedade_rural)
-            propriedade_rural.Gwp.append(28)
-            for row in reader:
+            propriedade_rural.HasBaseLineEmissions = basilene
+            nome_propriedade_rural = "RuralProperty1"
+            propriedade_rural.propertyName.append(nome_propriedade_rural)
+            propriedade_rural.gwp.append(28)
+            df = pd.read_csv(file_data)
+
+            for _, row in df.iterrows():
                 cow_id = row['Brinco']
-                
-                # Criar uma nova instância de DairyCattle apenas se ainda não existir para essa vaca
+
+                # Create a new instance of DairyCattle if it doesn't exist for this cow
                 if cow_id not in cow_instances:
-                    cow_instance = onto.DairyCattle(cattleId=[cow_id], cattleName=[str("Cattle" + row['Brinco'])])
+                    cow_instance = onto.DairyCattle(cattleId=[str(cow_id)])
+                    cow_instance.cattleName.append(f"Cattle{str(row['Brinco'])}")
+                    cow_instance.gwp.append(28)
+                    cow_instance.emissionFactor.append(103)
+                    cow_instance.monthsOnFarm.append(int(df[df['Brinco'] == cow_id]['Date'].count()))
                     cow_instances[cow_id] = cow_instance
                     cow_instance.BelongsToProperty = propriedade_rural
                 else:
                     cow_instance = cow_instances[cow_id]
 
-                # Criar uma instância de MeasurementData para cada linha de dados
+                # Create an instance of MeasurementData for each data row
                 measurement_data = onto.MeasurementData()
                 measurement_data.measurementDate.append(datetime.strptime(row['Date'], "%Y-%m-%d"))
                 measurement_data.cattleId.append(str(row['Brinco']))
-                measurement_data.peso.append(float(row['Peso']))
-                measurement_data.producao.append(float(row['Leite']))
-                measurement_data.fatorEmissao.append(103)
+                measurement_data.weight.append(float(row['Peso']))
+                measurement_data.milkProduction.append(float(row['Leite']))
+                measurement_data.emissionFactor.append(103)
 
-                # Conectar a instância de MeasurementData à instância de DairyCattle usando a propriedade HasMeasurementData
-                cow_instances[str(row['Brinco'])].HasMeasurementData.append(measurement_data)
+                # Connect the MeasurementData instance to the DairyCattle instance
+                cow_instance.HasMeasurementData.append(measurement_data)
 
-                # Conectar a instância de DairyCattle à propriedade rural usando a propriedade BelongsToProperty
 
     # Save the populated ontology
-    onto.save(file="ontology/ontologia_populada.owl", format="rdfxml")
+    onto.save(file=file_ontology_2, format="rdfxml")
     sync_reasoner_pellet(infer_property_values=True, infer_data_property_values=True)  # Pellet
     
     # Save the updated ontology
-    onto.save(file="ontology/ontologia_populada_sync_reasoner_pellet.owl", format="rdfxml")
+    onto.save(file=file_ontology_3, format="rdfxml")
     
 def getOntologia():
     populaOntologia()
-    return get_ontology('ontology/ontologia.owl')
+    return get_ontology('ontology/ontologia_final.owl')
 
     
 # Call the function to populate the ontology
-# popula_ontologia()
+populaOntologia()

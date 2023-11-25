@@ -60,6 +60,7 @@
 
 <owl:ObjectProperty rdf:about="#HasBaseLineEmissions">
   <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
   <rdfs:domain rdf:resource="#RuralProperty"/>
   <rdfs:range rdf:resource="#BaseLineEmissions"/>
 </owl:ObjectProperty>
@@ -84,11 +85,13 @@
 <owl:DatatypeProperty rdf:about="#peso">
   <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
   <rdfs:domain rdf:resource="#Cattle"/>
+  <rdfs:domain rdf:resource="#MeasurementData"/>
 </owl:DatatypeProperty>
 
 <owl:DatatypeProperty rdf:about="#producao">
   <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
   <rdfs:domain rdf:resource="#DairyCattle"/>
+  <rdfs:domain rdf:resource="#MeasurementData"/>
 </owl:DatatypeProperty>
 
 <owl:DatatypeProperty rdf:about="#dataMedicao">
@@ -99,6 +102,12 @@
 
 <owl:DatatypeProperty rdf:about="#fatorEmissao">
   <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  <rdfs:domain rdf:resource="#Cattle"/>
+  <rdfs:domain rdf:resource="#MeasurementData"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#monthsOnFarm">
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
   <rdfs:domain rdf:resource="#Cattle"/>
   <rdfs:domain rdf:resource="#MeasurementData"/>
 </owl:DatatypeProperty>
@@ -120,6 +129,7 @@
 
 <owl:DatatypeProperty rdf:about="#Gwp">
   <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  <rdfs:domain rdf:resource="#Cattle"/>
   <rdfs:domain rdf:resource="#RuralProperty"/>
 </owl:DatatypeProperty>
 
@@ -130,11 +140,6 @@
 
 <owl:DatatypeProperty rdf:about="#measurementDate">
   <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
-  <rdfs:domain rdf:resource="#MeasurementData"/>
-</owl:DatatypeProperty>
-
-<owl:DatatypeProperty rdf:about="#daysOnFarm">
-  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
   <rdfs:domain rdf:resource="#MeasurementData"/>
 </owl:DatatypeProperty>
 
@@ -178,13 +183,33 @@
 <swrl:Imp>
   <swrl:head>
     <rdf:Description>
+      <rdf:rest>
+        <rdf:Description>
+          <rdf:rest>
+            <rdf:Description>
+              <rdf:first>
+                <swrl:DifferentIndividualsAtom>
+                  <swrl:argument1 rdf:resource="urn:swrl#c2"/>
+                  <swrl:argument2 rdf:resource="urn:swrl#id1"/>
+                </swrl:DifferentIndividualsAtom>
+              </rdf:first>
+              <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </rdf:Description>
+          </rdf:rest>
+          <rdf:first>
+            <swrl:DifferentIndividualsAtom>
+              <swrl:argument1 rdf:resource="urn:swrl#c1"/>
+              <swrl:argument2 rdf:resource="urn:swrl#id2"/>
+            </swrl:DifferentIndividualsAtom>
+          </rdf:first>
+        </rdf:Description>
+      </rdf:rest>
       <rdf:first>
         <swrl:DifferentIndividualsAtom>
           <swrl:argument1 rdf:resource="urn:swrl#id1"/>
           <swrl:argument2 rdf:resource="urn:swrl#id2"/>
         </swrl:DifferentIndividualsAtom>
       </rdf:first>
-      <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
     </rdf:Description>
   </swrl:head>
   <swrl:body>

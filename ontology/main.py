@@ -8,7 +8,7 @@ import uvicorn
 app = FastAPI()
 
 # Carregar a ontologia
-onto = get_ontology("/home/pedro_estudos/Documentos/GitHub/Measuring_Enteric_Fermentation_Emissions/ontologia_populada_sync_reasoner_pellet.owl").load()
+onto = get_ontology("/home/pedro_estudos/Documentos/GitHub/Measuring_Enteric_Fermentation_Emissions/ontology/ontologia_final_populada_sync_reasoner_pellet.owl").load()
 
 # Configurar CORS para permitir solicitações de qualquer origem
 app.add_middleware(
