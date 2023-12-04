@@ -53,3 +53,5 @@ def parse_to_float(value):
 data = print(parse_file(
 '/home/pedro_estudos/Documentos/GitHub/Measuring_Enteric_Fermentation_Emissions/data/pesoXleite.csv')) 
 # 'data' contém os dados do arquivo CSV com as transformações desejadas
+
+
