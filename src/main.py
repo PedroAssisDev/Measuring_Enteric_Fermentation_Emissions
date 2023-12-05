@@ -62,7 +62,7 @@ def calculate_enteric_emission_factor(average_emission_factors, number_of_heads,
     return enteric_emission_factor
   
 
-owl = Namespace("http://www.semanticweb.org/owl/owlapi/mensuring_ontology#")
+owl = Namespace("http://www.semanticweb.org/owl/owlapi/EntericMeasureOnto#")
 rdf = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 
 query_gwp_emission_factor = """

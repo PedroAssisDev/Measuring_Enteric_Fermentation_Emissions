@@ -3,11 +3,11 @@
          xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
          xmlns:owl="http://www.w3.org/2002/07/owl#"
-         xml:base="http://www.semanticweb.org/owl/owlapi/mensuring_ontology"
-         xmlns="http://www.semanticweb.org/owl/owlapi/mensuring_ontology#"
+         xml:base="http://www.semanticweb.org/owl/owlapi/EntericMeasureOnto"
+         xmlns="http://www.semanticweb.org/owl/owlapi/EntericMeasureOnto#"
          xmlns:swrl="http://www.w3.org/2003/11/swrl#">
 
-<owl:Ontology rdf:about="http://www.semanticweb.org/owl/owlapi/mensuring_ontology"/>
+<owl:Ontology rdf:about="http://www.semanticweb.org/owl/owlapi/EntericMeasureOnto"/>
 
 <owl:ObjectProperty rdf:about="#HasMeasurementData">
   <rdfs:domain rdf:resource="#Cattle"/>

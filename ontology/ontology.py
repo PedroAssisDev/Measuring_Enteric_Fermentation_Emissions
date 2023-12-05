@@ -16,7 +16,7 @@ file_data = os.path.join(data_directory, "pesoXleite_parsed.csv")
 
 def generateOntology(save=True):
     onto_path.append(file_ontology_1)
-    onto = get_ontology("http://www.semanticweb.org/owl/owlapi/mensuring_ontology#")
+    onto = get_ontology("http://www.semanticweb.org/owl/owlapi/EntericMeasureOnto#")
     with onto:
         class Cattle(Thing):
             pass
