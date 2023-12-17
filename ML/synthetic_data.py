@@ -9,7 +9,7 @@ def generate_synthetic_data(num_samples):
     energy_density = np.random.uniform(18, 19.5, size=num_samples)
     avg_heads = np.random.uniform(100, 500, size=num_samples)
 
-    target_variable = (days * avg_dmi*6.5 *0.01 *energy_density * avg_heads*28*0.001) * np.random.uniform(1, 2, size=num_samples)
+    target_variable = (days * avg_dmi*6.5 *0.01 *energy_density * avg_heads*28*0.01) * np.random.uniform(2, 3, size=num_samples)
 
     noise = np.random.normal(0, 100, size=num_samples)
     target_variable += noise

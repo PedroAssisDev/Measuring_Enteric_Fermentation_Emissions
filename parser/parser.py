@@ -1,5 +1,8 @@
 # arquivo_parser.py
 import pandas as pd
+import numpy as np
+import os
+
 from datetime import datetime
 '''
 Considerações feitas na analise dos dados:
@@ -27,7 +30,15 @@ def parse_file(file_path):
         result_df = df.groupby(['Date', 'Brinco']).agg({'Leite': 'sum', 'Peso': 'mean'}).reset_index()
         result_df['Leite'] = result_df['Leite'].round(2)
         result_df['Peso'] = result_df['Peso'].round(2)
-        result_df.to_csv('/home/pedro_estudos/Documentos/GitHub/Measuring_Enteric_Fermentation_Emissions/data/pesoXleite_parsed.csv', index=False)
+        result_df['energyDensity'] = np.round(18+np.random.uniform(-1, 1, size=len(result_df)), 2)
+        result_df['dryMatterIntake'] = np.round(25+np.random.uniform(-2, 2, size=len(result_df)), 2)
+
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        base_directory = os.path.dirname(current_directory)
+        data_directory = os.path.join(base_directory, "data")
+        data_filename = 'pesoXleite_parsed.csv'
+        data_filepath = os.path.join(data_directory, data_filename)
+        result_df.to_csv(data_filepath, index=False)
         return result_df
 
     except FileNotFoundError:

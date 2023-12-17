@@ -224,7 +224,7 @@ def populaOntologia():
                     cow_instance = onto.DairyCattle(cattleId=[str(cow_id)])
                     cow_instance.cattleName.append("Cattle"+str(row['Brinco']))
                     cow_instance.gwp.append(28.00)
-                    cow_instance.emissionFactorTier1.append(103.00)
+                    cow_instance.emissionFactorTier1.append(78.00)
                     cow_instance.monthsOnFarm.append(float(df[df['Brinco'] == cow_id]['Date'].count()))
                     cow_instance.daysOnFarm.append(float(df[df['Brinco'] == cow_id]['Date'].count())*30)
                     cow_instances[cow_id] = cow_instance
@@ -233,7 +233,7 @@ def populaOntologia():
                     if checkAux:
                         cow_instance.energyDensity.append(float(row['energyDensity']))
                         cow_instance.dryMatterIntake.append(float(row['dryMatterIntake']))
-                        cow_instance.emissionFactorTier2.append(float(row['emissionFactorTier1']))
+                        cow_instance.emissionFactorTier2.append(float(6.5))
                     else:
                         cow_instance.energyDensity.append(0.0)
                         cow_instance.dryMatterIntake.append(0.0)
@@ -246,11 +246,11 @@ def populaOntologia():
                 measurement_data.cattleId.append(str(row['Brinco']))
                 measurement_data.weight.append(float(row['Peso']))
                 measurement_data.milkProduction.append(float(row['Leite']))
-                measurement_data.emissionFactorTier1.append(103)
+                measurement_data.emissionFactorTier1.append(78.00)
                 if checkAux:
                     measurement_data.energyDensity.append(float(row['energyDensity']))
                     measurement_data.dryMatterIntake.append(float(row['dryMatterIntake']))
-                    measurement_data.emissionFactorTier2.append(float(row['emissionFactorTier1']))
+                    measurement_data.emissionFactorTier2.append(6.5)
                 else:
                     measurement_data.energyDensity.append(0.0)
                     measurement_data.dryMatterIntake.append(0.0)
@@ -258,11 +258,18 @@ def populaOntologia():
 
                 cow_instance.HasMeasurementData.append(measurement_data)
             AllDifferent(cow_instances_list)
+            propriedade_rural.animalQuantity.append(len(cow_instances_list))
+            propriedade_rural.totalMilkProduction.append(float(df['Leite'].sum()))
+
+        # colocar previsão para o proximo periodo + - 5%
+        
 
 
     onto.save(file=file_ontology_2, format="rdfxml")
-    sync_reasoner_pellet(infer_property_values=True, infer_data_property_values=True)  # Pellet
-    
+    try:
+        sync_reasoner_pellet(infer_property_values=True, infer_data_property_values=True)
+    except Exception as e:
+        print(f"Erro durante a inferência: {e}")
     onto.save(file=file_ontology_3, format="rdfxml")
     
 def getOntologia():
@@ -270,4 +277,4 @@ def getOntologia():
     return get_ontology(file_ontology_3)
 
     
-#populaOntologia()
+populaOntologia()
