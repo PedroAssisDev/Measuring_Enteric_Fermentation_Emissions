@@ -4,12 +4,12 @@ import os
 
 def generate_synthetic_data(num_samples):
     np.random.seed(42)  
-    days = np.random.randint(90, 1000, size=num_samples)
+    days = np.random.randint(90, 700, size=num_samples)
     avg_dmi = np.random.uniform(14, 27, size=num_samples)
     energy_density = np.random.uniform(18, 19.5, size=num_samples)
     avg_heads = np.random.uniform(100, 500, size=num_samples)
 
-    target_variable = (days * avg_dmi*6.5 *0.01 *energy_density * avg_heads*28*0.01) * np.random.uniform(2, 3, size=num_samples)
+    target_variable = ((days * avg_dmi *0.01 *energy_density * avg_heads * 28 * 0.01) * np.random.uniform(1, 3, size=num_samples))/55.65
 
     noise = np.random.normal(0, 100, size=num_samples)
     target_variable += noise

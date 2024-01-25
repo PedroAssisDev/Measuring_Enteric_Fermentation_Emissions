@@ -119,12 +119,22 @@
   <rdfs:domain rdf:resource="#Cattle"/>
 </owl:DatatypeProperty>
 
-<owl:DatatypeProperty rdf:about="#totalIndividualEntericEmissionFactorTier1">
+<owl:DatatypeProperty rdf:about="#individualEntericEmissionFactorTier1">
   <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
   <rdfs:domain rdf:resource="#Cattle"/>
 </owl:DatatypeProperty>
 
-<owl:DatatypeProperty rdf:about="#totalIndividualEntericEmissionFactorTier2">
+<owl:DatatypeProperty rdf:about="#individualEntericEmissionTier1">
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  <rdfs:domain rdf:resource="#Cattle"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#individualEntericEmissionFactorTier2">
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  <rdfs:domain rdf:resource="#Cattle"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#individualEntericEmissionTier2">
   <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
   <rdfs:domain rdf:resource="#Cattle"/>
 </owl:DatatypeProperty>
@@ -227,12 +237,174 @@
 
 <swrl:Variable rdf:about="urn:swrl#finalResult"/>
 
+<swrl:Variable rdf:about="urn:swrl#eeft1"/>
+
+<swrl:Variable rdf:about="urn:swrl#gwp"/>
+
+<swrl:Variable rdf:about="urn:swrl#eeft2"/>
+
 <swrl:Imp>
   <swrl:head>
     <rdf:Description>
       <rdf:first>
         <swrl:DatavaluedPropertyAtom>
-          <swrl:propertyPredicate rdf:resource="#totalIndividualEntericEmissionFactorTier2"/>
+          <swrl:propertyPredicate rdf:resource="#individualEntericEmissionTier2"/>
+          <swrl:argument1 rdf:resource="urn:swrl#cattle"/>
+          <swrl:argument2 rdf:resource="urn:swrl#finalResult"/>
+        </swrl:DatavaluedPropertyAtom>
+      </rdf:first>
+      <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+    </rdf:Description>
+  </swrl:head>
+  <swrl:body>
+    <rdf:Description>
+      <rdf:rest>
+        <rdf:Description>
+          <rdf:rest>
+            <rdf:Description>
+              <rdf:rest>
+                <rdf:Description>
+                  <rdf:first>
+                    <swrl:BuiltinAtom>
+                      <swrl:arguments>
+                        <rdf:Description>
+                          <rdf:rest>
+                            <rdf:Description>
+                              <rdf:rest>
+                                <rdf:Description>
+                                  <rdf:rest>
+                                    <rdf:Description>
+                                      <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                      <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">0.001</rdf:first>
+                                    </rdf:Description>
+                                  </rdf:rest>
+                                  <rdf:first rdf:resource="urn:swrl#gwp"/>
+                                </rdf:Description>
+                              </rdf:rest>
+                              <rdf:first rdf:resource="urn:swrl#eeft2"/>
+                            </rdf:Description>
+                          </rdf:rest>
+                          <rdf:first rdf:resource="urn:swrl#result"/>
+                        </rdf:Description>
+                      </swrl:arguments>
+                      <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#multiply"/>
+                    </swrl:BuiltinAtom>
+                  </rdf:first>
+                  <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                </rdf:Description>
+              </rdf:rest>
+              <rdf:first>
+                <swrl:DatavaluedPropertyAtom>
+                  <swrl:propertyPredicate rdf:resource="#gwp"/>
+                  <swrl:argument1 rdf:resource="urn:swrl#cattle"/>
+                  <swrl:argument2 rdf:resource="urn:swrl#gwp"/>
+                </swrl:DatavaluedPropertyAtom>
+              </rdf:first>
+            </rdf:Description>
+          </rdf:rest>
+          <rdf:first>
+            <swrl:DatavaluedPropertyAtom>
+              <swrl:propertyPredicate rdf:resource="#individualEntericEmissionFactorTier2"/>
+              <swrl:argument1 rdf:resource="urn:swrl#cattle"/>
+              <swrl:argument2 rdf:resource="urn:swrl#eeft2"/>
+            </swrl:DatavaluedPropertyAtom>
+          </rdf:first>
+        </rdf:Description>
+      </rdf:rest>
+      <rdf:first>
+        <swrl:ClassAtom>
+          <swrl:classPredicate rdf:resource="#Cattle"/>
+          <swrl:argument1 rdf:resource="urn:swrl#cattle"/>
+        </swrl:ClassAtom>
+      </rdf:first>
+    </rdf:Description>
+  </swrl:body>
+</swrl:Imp>
+
+<swrl:Imp>
+  <swrl:head>
+    <rdf:Description>
+      <rdf:first>
+        <swrl:DatavaluedPropertyAtom>
+          <swrl:propertyPredicate rdf:resource="#individualEntericEmissionTier1"/>
+          <swrl:argument1 rdf:resource="urn:swrl#cattle"/>
+          <swrl:argument2 rdf:resource="urn:swrl#finalResult"/>
+        </swrl:DatavaluedPropertyAtom>
+      </rdf:first>
+      <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+    </rdf:Description>
+  </swrl:head>
+  <swrl:body>
+    <rdf:Description>
+      <rdf:rest>
+        <rdf:Description>
+          <rdf:rest>
+            <rdf:Description>
+              <rdf:rest>
+                <rdf:Description>
+                  <rdf:first>
+                    <swrl:BuiltinAtom>
+                      <swrl:arguments>
+                        <rdf:Description>
+                          <rdf:rest>
+                            <rdf:Description>
+                              <rdf:rest>
+                                <rdf:Description>
+                                  <rdf:rest>
+                                    <rdf:Description>
+                                      <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                      <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">0.001</rdf:first>
+                                    </rdf:Description>
+                                  </rdf:rest>
+                                  <rdf:first rdf:resource="urn:swrl#gwp"/>
+                                </rdf:Description>
+                              </rdf:rest>
+                              <rdf:first rdf:resource="urn:swrl#eeft1"/>
+                            </rdf:Description>
+                          </rdf:rest>
+                          <rdf:first rdf:resource="urn:swrl#result"/>
+                        </rdf:Description>
+                      </swrl:arguments>
+                      <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#multiply"/>
+                    </swrl:BuiltinAtom>
+                  </rdf:first>
+                  <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                </rdf:Description>
+              </rdf:rest>
+              <rdf:first>
+                <swrl:DatavaluedPropertyAtom>
+                  <swrl:propertyPredicate rdf:resource="#gwp"/>
+                  <swrl:argument1 rdf:resource="urn:swrl#cattle"/>
+                  <swrl:argument2 rdf:resource="urn:swrl#gwp"/>
+                </swrl:DatavaluedPropertyAtom>
+              </rdf:first>
+            </rdf:Description>
+          </rdf:rest>
+          <rdf:first>
+            <swrl:DatavaluedPropertyAtom>
+              <swrl:propertyPredicate rdf:resource="#individualEntericEmissionFactorTier1"/>
+              <swrl:argument1 rdf:resource="urn:swrl#cattle"/>
+              <swrl:argument2 rdf:resource="urn:swrl#eeft1"/>
+            </swrl:DatavaluedPropertyAtom>
+          </rdf:first>
+        </rdf:Description>
+      </rdf:rest>
+      <rdf:first>
+        <swrl:ClassAtom>
+          <swrl:classPredicate rdf:resource="#Cattle"/>
+          <swrl:argument1 rdf:resource="urn:swrl#cattle"/>
+        </swrl:ClassAtom>
+      </rdf:first>
+    </rdf:Description>
+  </swrl:body>
+</swrl:Imp>
+
+<swrl:Imp>
+  <swrl:head>
+    <rdf:Description>
+      <rdf:first>
+        <swrl:DatavaluedPropertyAtom>
+          <swrl:propertyPredicate rdf:resource="#individualEntericEmissionFactorTier2"/>
           <swrl:argument1 rdf:resource="urn:swrl#cattle"/>
           <swrl:argument2 rdf:resource="urn:swrl#finalResult"/>
         </swrl:DatavaluedPropertyAtom>
@@ -424,7 +596,7 @@
     <rdf:Description>
       <rdf:first>
         <swrl:DatavaluedPropertyAtom>
-          <swrl:propertyPredicate rdf:resource="#totalIndividualEntericEmissionFactorTier1"/>
+          <swrl:propertyPredicate rdf:resource="#individualEntericEmissionFactorTier1"/>
           <swrl:argument1 rdf:resource="urn:swrl#cattle"/>
           <swrl:argument2 rdf:resource="urn:swrl#result"/>
         </swrl:DatavaluedPropertyAtom>

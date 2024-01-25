@@ -79,12 +79,18 @@ def generateOntology(save=True):
         class daysOnFarm(DataProperty):
             domain = [Cattle]
             range = [float]      
-        class totalIndividualEntericEmissionFactorTier1(DataProperty):
+        class individualEntericEmissionFactorTier1(DataProperty):
             domain = [Cattle]
             range = [float] 
-        class totalIndividualEntericEmissionFactorTier2(DataProperty):
+        class individualEntericEmissionTier1(DataProperty):
+            domain = [Cattle]
+            range = [float]
+        class individualEntericEmissionFactorTier2(DataProperty):
             domain = [Cattle]
             range = [float] 
+        class individualEntericEmissionTier2(DataProperty):
+            domain = [Cattle]
+            range = [float]  
         class animalQuantity(DataProperty):
             domain = [RuralProperty]
             range = [float]
@@ -163,13 +169,13 @@ def createRules():
     rule_milk_production_cattle.set_as_rule(
             'Cattle(?cattle) ^ milkProduction(?cattle, ?production) -> DairyCattle(?cattle)'
         )
-    rule_enteric_emissionTier1_factor_per_individual = Imp()
-    rule_enteric_emissionTier1_factor_per_individual.set_as_rule(
+    rule_enteric_factor_emissionTier1_individual = Imp()
+    rule_enteric_factor_emissionTier1_individual.set_as_rule(
         'DairyCattle(?cattle) ^ '
         'emissionFactorTier1(?cattle, ?e) ^ '
         'daysOnFarm(?cattle, ?d) ^ '
         'multiply(?result, ?e, ?d) ^ '
-        '-> totalIndividualEntericEmissionFactorTier1(?cattle, ?result)'
+        '-> individualEntericEmissionFactorTier1(?cattle, ?result)'
         )     
     rule_grossEnergyIntake_per_individual = Imp()
     rule_grossEnergyIntake_per_individual.set_as_rule(
@@ -179,15 +185,31 @@ def createRules():
         'multiply(?result, ?e, ?d) ^ '
         '-> grossEnergyIntake(?cattle, ?result)'
         ) 
-    rule_sum_enteric_emission_and_multiply_gwp = Imp()
-    rule_sum_enteric_emission_and_multiply_gwp.set_as_rule(
+    rule_enteric_factor_emissionTier2_individual = Imp()
+    rule_enteric_factor_emissionTier2_individual.set_as_rule(
         'Cattle(?cattle) ^ '
         'grossEnergyIntake(?cattle, ?gei) ^ '
         'daysOnFarm(?cattle, ?d) ^ '
         'emissionFactorTier2(?cattle, ?ef) ^'
         'multiply(?result, ?gei, ?d, ?ef, 0.01) ^ '
         'divide(?finalResult, ?result, 55.65) ^ '
-        '-> totalIndividualEntericEmissionFactorTier2(?cattle, ?finalResult)'
+        '-> individualEntericEmissionFactorTier2(?cattle, ?finalResult)'
+    )
+    rule_enteric_emissionTier1_individual = Imp()
+    rule_enteric_emissionTier1_individual.set_as_rule(
+        'Cattle(?cattle) ^ '
+        'individualEntericEmissionFactorTier1(?cattle, ?eeft1) ^ '
+        'gwp(?cattle, ?gwp) ^ '
+        'multiply(?result, ?eeft1, ?gwp, 0.001) ^ '
+        '-> individualEntericEmissionTier1(?cattle, ?finalResult)'
+    )  
+    rule_enteric_emissionTier2_individual = Imp()
+    rule_enteric_emissionTier2_individual.set_as_rule(
+        'Cattle(?cattle) ^ '
+        'individualEntericEmissionFactorTier2(?cattle, ?eeft2) ^ '
+        'gwp(?cattle, ?gwp) ^ '
+        'multiply(?result, ?eeft2, ?gwp, 0.001) ^ '
+        '-> individualEntericEmissionTier2(?cattle, ?finalResult)'
     )        
 
     print("SWRL Rule:", rule_milk_production_cattle)     
@@ -208,6 +230,9 @@ def populaOntologia():
 
     with onto:
             df = pd.read_csv(file_data)
+            GWP = 28.00
+            EMISSION_FACTOR_TIER_1 = 78.00
+            EMISSION_FACTOR_TIER_2 = 6.5
             checkAux = all(col in df.columns for col in ['energyDensity', 'dryMatterIntake'])
             basileneTier1 = onto.BaseLineEmissionsTier1()
             basileneTier2 = onto.BaseLineEmissionsTier2()
@@ -216,15 +241,15 @@ def populaOntologia():
 
             nome_propriedade_rural = "RuralProperty1"
             propriedade_rural.propertyName.append(nome_propriedade_rural)
-            propriedade_rural.gwp.append(28.00)
+            propriedade_rural.gwp.append(GWP)
             for _, row in df.iterrows():
                 cow_id = row['Brinco']
 
                 if cow_id not in cow_instances:
                     cow_instance = onto.DairyCattle(cattleId=[str(cow_id)])
                     cow_instance.cattleName.append("Cattle"+str(row['Brinco']))
-                    cow_instance.gwp.append(28.00)
-                    cow_instance.emissionFactorTier1.append(78.00)
+                    cow_instance.gwp.append(GWP)
+                    cow_instance.emissionFactorTier1.append(EMISSION_FACTOR_TIER_1)
                     cow_instance.monthsOnFarm.append(float(df[df['Brinco'] == cow_id]['Date'].count()))
                     cow_instance.daysOnFarm.append(float(df[df['Brinco'] == cow_id]['Date'].count())*30)
                     cow_instances[cow_id] = cow_instance
@@ -233,7 +258,7 @@ def populaOntologia():
                     if checkAux:
                         cow_instance.energyDensity.append(float(row['energyDensity']))
                         cow_instance.dryMatterIntake.append(float(row['dryMatterIntake']))
-                        cow_instance.emissionFactorTier2.append(float(6.5))
+                        cow_instance.emissionFactorTier2.append(EMISSION_FACTOR_TIER_2)
                     else:
                         cow_instance.energyDensity.append(0.0)
                         cow_instance.dryMatterIntake.append(0.0)
@@ -246,11 +271,11 @@ def populaOntologia():
                 measurement_data.cattleId.append(str(row['Brinco']))
                 measurement_data.weight.append(float(row['Peso']))
                 measurement_data.milkProduction.append(float(row['Leite']))
-                measurement_data.emissionFactorTier1.append(78.00)
+                measurement_data.emissionFactorTier1.append(EMISSION_FACTOR_TIER_1)
                 if checkAux:
                     measurement_data.energyDensity.append(float(row['energyDensity']))
                     measurement_data.dryMatterIntake.append(float(row['dryMatterIntake']))
-                    measurement_data.emissionFactorTier2.append(6.5)
+                    measurement_data.emissionFactorTier2.append(EMISSION_FACTOR_TIER_2)
                 else:
                     measurement_data.energyDensity.append(0.0)
                     measurement_data.dryMatterIntake.append(0.0)
@@ -260,8 +285,6 @@ def populaOntologia():
             AllDifferent(cow_instances_list)
             propriedade_rural.animalQuantity.append(len(cow_instances_list))
             propriedade_rural.totalMilkProduction.append(float(df['Leite'].sum()))
-
-        # colocar previsão para o proximo periodo + - 5%
         
 
 
@@ -277,4 +300,4 @@ def getOntologia():
     return get_ontology(file_ontology_3)
 
     
-populaOntologia()
+#populaOntologia()
