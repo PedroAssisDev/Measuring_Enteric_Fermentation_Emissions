@@ -29,7 +29,7 @@ def predict_model(days, dmi, energy, heads):
         'Days': [days],
         'Average_DMI': [dmi],
         'Energy_density_of_feed': [energy],
-        'Average_number_of_heads': [150]
+        'Average_number_of_heads': [heads]
     })
 
     return linear_model.predict(new_data)
@@ -113,8 +113,8 @@ WHERE {
 GROUP BY ?month ?year 
 ORDER BY ?year ?month
 """
-df = pd.DataFrame(columns=['Month', 'Year', 'Count Dairy Cattle', 'Total Milk', 'Average Weight', 'Number of days', 'Enteric Emission Factor Tier 1', 'Reference Scenario Emissions Tier 1', 
-                           'Enteric Emission Factor Tier 2', 'Reference Scenario Emissions Tier 2'])
+df = pd.DataFrame(columns=['Month', 'Year', 'Count Dairy Cattle', 'Total Milk', 'Average Weight', 'Number of days',  'gwp', 'emissionFactorTier1', 'averageEnergyDensity', 'averageDryMatterIntake', 'averageEmissionFactorTier2', 
+                           'Enteric Emission Factor Tier 1', 'Reference Scenario Emissions Tier 1', 'Enteric Emission Factor Tier 2', 'Reference Scenario Emissions Tier 2'])
 
 result_number_of_cows_milk_production_last_day = g.query(query_number_of_cows_milk_production, initNs={"rdf": rdf, "owl": owl})
 
@@ -135,7 +135,7 @@ for row in result_number_of_cows_milk_production_last_day:
     enteric_ef_tier2 = calculate_enteric_emission_factor_tier2(averageEnergyDensity, averageDryMatterIntake, averageEmissionFactorTier2, count_dairy_cattle, days)
     reference_scenario_emissions_tier2 = calculate_reference_scenario_emissions(enteric_ef_tier2, gwp)
 
-    data.append([row.month, row.year, count_dairy_cattle, total_milk, average_weight, days, enteric_ef_tier1, reference_scenario_emissions_tier1,
+    data.append([row.month, row.year, count_dairy_cattle, total_milk, average_weight, days, gwp, emissionFactorTier1,  averageEnergyDensity, averageDryMatterIntake, averageEmissionFactorTier2, enteric_ef_tier1, reference_scenario_emissions_tier1,
                  enteric_ef_tier2, reference_scenario_emissions_tier2])
 
 df = pd.DataFrame(data, columns=df.columns)
@@ -144,17 +144,18 @@ df = pd.DataFrame(data, columns=df.columns)
 st.set_page_config(layout="wide")
 st.sidebar.subheader("Predictions")
 
-days_input = st.sidebar.number_input("Days:", min_value=0, max_value=900, value= 0)
-dmi_input = st.sidebar.number_input("Average DMI:", min_value=0, value=0)
-energy_input = st.sidebar.number_input("Energy Density of Feed:", min_value=0, value = 0)
-heads_input = st.sidebar.number_input("Average Number of Heads:", min_value=0, value = 0)
+days_input = st.sidebar.number_input("Days:", min_value=0)
+dmi_input = st.sidebar.number_input("Average DMI:", min_value=0)
+energy_input = st.sidebar.number_input("Energy Density of Feed:", min_value=0)
+heads_input = st.sidebar.number_input("Average Number of Heads:", min_value=0)
 
 if st.sidebar.button("Projected Scenario"):
+    print(f"heads_input {heads_input}; heads_input{type(heads_input)}")
     prediction = float(predict_model(days_input, dmi_input, energy_input, heads_input))
     if prediction < 0:
         st.sidebar.error(f"The provided values don't make sense.")
     else:
-        st.sidebar.success(f"Estimated total emissions in the projected scenario: {prediction} tons of CO2")
+        st.sidebar.success(f"Estimated total emissions in the projected scenario: {round(prediction, 2)} tons of CO2")
 
 
 df["Date"] = df["Month"].astype(str) + "-" + df["Year"].astype(str)
@@ -163,8 +164,10 @@ df["Date"] = pd.to_datetime(df["Date"])
 
 df.to_csv("test.csv", sep= ";")
 
+default_last_month = df["Date"].max().strftime("%m-%Y")
+
 start_month = st.sidebar.selectbox("Start Month", df["Date"].dt.strftime("%m-%Y").unique())
-last_month = st.sidebar.selectbox("End Month", df["Date"].dt.strftime("%m-%Y").unique())
+last_month = st.sidebar.selectbox("End Month", df["Date"].dt.strftime("%m-%Y").unique(), index= 2)
 
 start_month = pd.to_datetime(start_month, format="%m-%Y")
 last_month = pd.to_datetime(last_month, format="%m-%Y")
@@ -173,22 +176,35 @@ df_filtered = df[(df["Date"] >= start_month) & (df["Date"] <= last_month)]
 
 st.title("Milk Production and Emissions Analysis")
 
+# Calcule o total do período para a coluna "Total Milk"
+total_period_milk = df_filtered["Total Milk"].sum()
+formatted_start_month = start_month.strftime("%Y-%m")
+formatted_last_month = last_month.strftime("%Y-%m")
 # Line chart for total milk production over time
-fig1 = px.line(df_filtered, x="Date", y="Total Milk", title="Total Milk Production Over Time")
-fig1.update_yaxes(title_text='Milk Production [L]')  # Add this line to set the y-axis label
+fig1 = px.line(df_filtered, x="Date", y="Total Milk", 
+               title=f"Total Milk for {formatted_start_month} to {formatted_last_month}: {total_period_milk:.2f} Liters."
+               )
+fig1.update_yaxes(title_text='Milk Production [L]')  # Adicione esta linha para definir o rótulo do eixo y
 st.plotly_chart(fig1, use_container_width=True)
 
 # Bar chart for the average number of dairy cattle
-fig2 = px.bar(df_filtered, x="Date", y="Count Dairy Cattle", title="Average Number of Dairy Cattle Over Time")
+total_period_cattle = df_filtered["Count Dairy Cattle"].mean()
+fig2 = px.bar(df_filtered, x="Date", y="Count Dairy Cattle", 
+              title=f"Average Number of Dairy Cattle for {formatted_start_month} to {formatted_last_month}: {total_period_cattle:.2f} Cattle."
+              )
 st.plotly_chart(fig2, use_container_width=True)
 
-fig3 = px.bar(df_filtered, x="Date", y=["Reference Scenario Emissions Tier 1"],
-               title="Reference Scenario Emissions Tier 1")
+total_tier1 = df_filtered["Reference Scenario Emissions Tier 1"].sum()
+
+fig3 = px.bar(df_filtered, x="Date", y= "Reference Scenario Emissions Tier 1",
+              title=f"Total Reference Scenario Emissions Tier 1 for {formatted_start_month} to {formatted_last_month}: {total_tier1:.2f} tons of CO2."
+               )
 fig3.update_yaxes(title_text='CO2 Emissions [tons]')  # Add this line to set the y-axis label
 st.plotly_chart(fig3, use_container_width=True)
 
-# Stacked bar chart for enteric emissions Tier 1 and Tier 2
-fig4 = px.bar(df_filtered, x="Date", y=["Enteric Emission Factor Tier 1"],
-              title="Enteric Emissions Tier 1")
-fig4.update_yaxes(title_text='CH4 Emissions [kg]')  # Add this line to set the y-axis label
+total_tier2 = df_filtered["Reference Scenario Emissions Tier 2"].sum()
+fig4 = px.bar(df_filtered, x="Date", y= "Reference Scenario Emissions Tier 2",
+              title=f"Total Reference Scenario Emissions Tier 2 for {formatted_start_month} to {formatted_last_month}: {total_tier2:.2f} tons of CO2."
+              )
+fig4.update_yaxes(title_text='CO2 Emissions [tons]')  # Add this line to set the y-axis label
 st.plotly_chart(fig4, use_container_width=True)

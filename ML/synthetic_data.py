@@ -4,14 +4,14 @@ import os
 
 def generate_synthetic_data(num_samples):
     np.random.seed(42)  
-    days = np.random.randint(90, 700, size=num_samples)
+    days = np.random.randint(30, 365, size=num_samples)
     avg_dmi = np.random.uniform(14, 27, size=num_samples)
-    energy_density = np.random.uniform(18, 19.5, size=num_samples)
-    avg_heads = np.random.uniform(100, 500, size=num_samples)
+    energy_density = np.random.uniform(14, 27, size=num_samples)
+    avg_heads = np.random.uniform(50, 400, size=num_samples)
 
-    target_variable = ((days * avg_dmi *0.01 *energy_density * avg_heads * 28 * 0.01) * np.random.uniform(1, 3, size=num_samples))/55.65
+    target_variable = (days * avg_dmi *0.01 *energy_density * avg_heads * 6.5 * 20 * 0.001)/55.65
 
-    noise = np.random.normal(0, 100, size=num_samples)
+    noise = np.random.normal(-50, 50, size=num_samples)
     target_variable += noise
 
     return pd.DataFrame({
@@ -22,7 +22,7 @@ def generate_synthetic_data(num_samples):
         'Global_emission_Ton_CO2e': target_variable
     })
 
-num_synthetic_samples = 100000
+num_synthetic_samples = 50000
 
 synthetic_data = generate_synthetic_data(num_synthetic_samples)
 
