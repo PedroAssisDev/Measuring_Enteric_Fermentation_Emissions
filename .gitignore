@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+.env
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Test / runtime artifacts
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+results/*.csv
+!results/.gitkeep
+
+# Local cwd exports (historical dashboard side-effect)
+/test.csv
+src/test.csv
+
+# OS
+Thumbs.db
+.DS_Store

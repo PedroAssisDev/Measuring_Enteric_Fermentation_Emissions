@@ -1,0 +1,27 @@
+# Scientific parameters used by CarbonSECO for Livestock.
+# These values match the ICEIS 2024 feasibility study implementation.
+# Do not change them without documenting scientific impact.
+
+gwp_methane: 28.0
+emission_factor_tier1_kg_ch4_per_head_per_day: 78.0
+emission_factor_tier2_ym_percent: 6.5
+methane_energy_content_mj_per_kg: 55.65
+days_per_month_approximation: 30
+
+# Default diet placeholders used when farm measurements are unavailable
+# (as in the feasibility study Tier-2 enrichment step).
+default_energy_density_mj_per_kg: 18.0
+default_dry_matter_intake_kg_per_head_per_day: 25.0
+energy_density_noise_half_range: 1.0
+dry_matter_intake_noise_half_range: 2.0
+
+# Factor used in the synthetic ML training-target formula.
+synthetic_training_gwp_factor: 20.0
+
+# Feasibility-study projection example (paper Section 5).
+paper_projection:
+  days: 335
+  average_dmi: 21.0
+  energy_density_of_feed: 18.0
+  average_number_of_heads: 200.0
+  expected_tco2e: 598.48

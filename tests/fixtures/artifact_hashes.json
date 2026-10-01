@@ -1,0 +1,10 @@
+{
+  "data/raw/pesoXleite.csv": "fb9af2f1db82878738e625d0832992db5eb60ec47277e0ae3b6406d022b03c06",
+  "data/processed/pesoXleite_parsed.csv": "cb8ee1e3e2a424af566893784af060b286c0064449154b4024fc75d14674df36",
+  "data/processed/sintetico.csv": "8b7ae79c07a4f179f25c13545744b8cd34bfdb0eed5fa3eccbc3c57c9e33ab06",
+  "models/linear_regression_model.pkl": "87a7f687262bf44f1dddec397633a50b919be4425cfcfe475857a59870b06140",
+  "ontology_assets/ontologia.owl": "4718aa7043b8a29286cb489456e2513800185bb782605455d471cf7cab30b467",
+  "ontology_assets/ontologia_final_populada.owl": "de79542012840d6aacc4c7a183edca530dd2ea6acd1be09b0b4246fcab2b2297",
+  "ontology_assets/ontologia_populada_sync_reasoner_pellet.owl": "de79542012840d6aacc4c7a183edca530dd2ea6acd1be09b0b4246fcab2b2297",
+  "paper_projection_expected_tco2e": 598.4839962675787
+}

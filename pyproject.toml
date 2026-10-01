@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "carbonseco-livestock"
+version = "1.0.0"
+description = "CarbonSECO for Livestock: ontology and ML services for enteric fermentation emissions"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+license = { text = "CC BY-NC-ND 4.0" }
+authors = [
+  { name = "Pedro Henrique Assis Silva" },
+]
+keywords = [
+  "enteric-fermentation",
+  "methane",
+  "ontology",
+  "ipcc",
+  "carbonseco",
+  "dairy",
+]
+dependencies = [
+  "pandas>=2.2.2,<3",
+  "numpy>=2.1.0,<3",
+  "scikit-learn>=1.5.0,<1.7",
+  "joblib>=1.3,<2",
+  "owlready2>=0.45,<0.47",
+  "rdflib>=7.0,<8",
+  "pyparsing>=3.0.9,<3.2",
+  "fastapi>=0.104.1,<0.116",
+  "uvicorn>=0.24,<0.35",
+  "streamlit>=1.28,<1.45",
+  "plotly>=5.18,<6",
+  "PyYAML>=6.0,<7",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.6",
+]
+
+[project.scripts]
+carbonseco-parse = "carbonseco_livestock.cli:parse_farm_data_cli"
+carbonseco-build-ontology = "carbonseco_livestock.cli:build_ontology_cli"
+carbonseco-generate-synthetic = "carbonseco_livestock.cli:generate_synthetic_cli"
+carbonseco-train = "carbonseco_livestock.cli:train_model_cli"
+carbonseco-api = "carbonseco_livestock.cli:run_api_cli"
+carbonseco-dashboard = "carbonseco_livestock.cli:run_dashboard_cli"
+
+[project.urls]
+Paper = "https://doi.org/10.5220/0012734300003690"
+Repository = "https://github.com/PedroAssisDev/Measuring_Enteric_Fermentation_Emissions"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
